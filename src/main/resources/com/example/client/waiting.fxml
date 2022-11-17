@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="102.0" prefWidth="405.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.client.controller.WaitingController">
+   <children>
+      <Label fx:id="wait" alignment="CENTER" layoutY="17.0" prefHeight="65.0" prefWidth="341.0" text="等待其他玩家加入房间……">
+         <font>
+            <Font name="Consolas" size="28.0" />
+         </font>
+      </Label>
+      <ProgressIndicator fx:id="ima" layoutX="341.0" layoutY="41.0" prefHeight="17.0" prefWidth="32.0" />
+   </children>
+</AnchorPane>
