@@ -1,12 +1,10 @@
 package com.example.client.controller;
 
-//import entity.Result;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,8 +18,6 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class GameController {
     Socket player;
@@ -43,11 +39,8 @@ public class GameController {
     @FXML
     private Rectangle game_panel;
 
-//    private static boolean TURN = false;
-
     private static int[][] chessBoard = new int[3][3];
     private static boolean[][] flag = new boolean[3][3];
-//    private int win = 0;
     private int myRole;
     private String info_mess;
 
@@ -84,8 +77,6 @@ public class GameController {
 
                     os.write(send_bytes);
                     os.flush();
-//                    player.shutdownOutput();
-
 
                     //接收结果报文
                     InputStream is = player.getInputStream();
@@ -109,23 +100,18 @@ public class GameController {
                         nextStage.setResizable(false);
                         nextStage.show();
                     }
-//                    InputStream is = player.getInputStream();
-//                    ObjectInputStream ois = new ObjectInputStream(is);
-//                    Result my_res = (Result) ois.readObject();
-                    //操作成功
-//                    if (my_res.state_code == 200) {
-//                        //判断胜负
-//                        //赢了弹窗
-//                    } else {
-//                        //有异常 比如点击已有棋子区域
-//                    }
-
-
-//                byte[] buf = new byte[1024];
-//                int readLen = 0;
-//                String response="";
-//                readLen = is.read(buf);
-//                response = new String(buf, 0, readLen);
+                    //如果加上的状态码要改长度 或者让状态码和这个合并也行
+                    else if (res.length==4 && res[3].equals("full")){
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                        fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
+                        Pane root = fxmlLoader.load();
+                        Stage nextStage = new Stage();
+                        nextStage.setTitle("对战结果");
+                        nextStage.setScene(new Scene(root));
+                        nextStage.setResizable(false);
+                        nextStage.show();
+                    }
 
                     //再接收一遍对手的结果
                     else {
@@ -157,16 +143,19 @@ public class GameController {
                             nextStage.setResizable(false);
                             nextStage.show();
                         }
+                        //如果加上的状态码要改长度 或者让状态码和这个合并也行
+                        else if (res.length==4 && res[3].equals("full")){
+                            FXMLLoader fxmlLoader = new FXMLLoader();
+                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                            fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
+                            Pane root = fxmlLoader.load();
+                            Stage nextStage = new Stage();
+                            nextStage.setTitle("对战结果");
+                            nextStage.setScene(new Scene(root));
+                            nextStage.setResizable(false);
+                            nextStage.show();
+                        }
                     }
-
-
-//                    Result oppo_res = (Result) ois.readObject();
-//                    chessBoard = oppo_res.chessboard;
-//                    drawChess();
-//                    TURN = !TURN;
-//                    if (oppo_res.state_code == 200 && oppo_res.win) {
-//                        //对手赢了
-//                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -197,11 +186,6 @@ public class GameController {
                     else {
                         info.setVisible(false);
                     }
-//                    player.shutdownInput();
-//                    InputStream init = player.getInputStream();
-//                    ObjectInputStream init_ois = new ObjectInputStream(init);
-//                    Result init_res = (Result) init_ois.readObject();
-//                    chessBoard = init_res.chessboard;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -213,8 +197,6 @@ public class GameController {
     public void initialize(){
         info.setText(info_mess);
         game_panel.setOnMouseClicked(event -> {
-//            int x = (int) (event.getX() / BOUND);
-//            int y = (int) (event.getY() / BOUND);
             int x = (int) (event.getX() / BOUND);
             int y = (int) (event.getY() / BOUND);
             //渲染当前步骤 如果有效才执行下面发报文等的操作
@@ -223,115 +205,9 @@ public class GameController {
                 this.x = x;
                 this.y = y;
                 drawChess();
-//                TURN = !TURN;
-//                try {
-//                    //发送行动位置报文
-//                    OutputStream os = player.getOutputStream();
-//                    String send_str;
-//                    send_str = x + " " + y;
-//                    System.out.println(send_str);
-//                    byte[] send_bytes = send_str.getBytes();
-//
-//                    os.write(send_bytes);
-//                    os.flush();
-////                    player.shutdownOutput();
-//
-//
-//                    //接收结果报文
-//                    InputStream is = player.getInputStream();
-//                    byte[] buf = new byte[1024];
-//                    int readLen = 0;
-//                    String response="";
-//                    readLen = is.read(buf);
-//                    response = new String(buf, 0, readLen);
-//                    String[] res = response.split(" ");
-//                    //到时候还加状态码，先这样
-//                    if (res[0].equals("Yes")){
-//                        System.out.println("我赢了");
-//                        // 开启新界面
-//                        FXMLLoader fxmlLoader = new FXMLLoader();
-//                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                        fxmlLoader.setControllerFactory(t -> new ResultController("恭喜你赢了!"));
-//                        Pane root = fxmlLoader.load();
-//                        Stage nextStage = new Stage();
-//                        nextStage.setTitle("对战结果");
-//                        nextStage.setScene(new Scene(root));
-//                        nextStage.setResizable(false);
-//                        nextStage.show();
-//                    }
-////                    InputStream is = player.getInputStream();
-////                    ObjectInputStream ois = new ObjectInputStream(is);
-////                    Result my_res = (Result) ois.readObject();
-//                    //操作成功
-////                    if (my_res.state_code == 200) {
-////                        //判断胜负
-////                        //赢了弹窗
-////                    } else {
-////                        //有异常 比如点击已有棋子区域
-////                    }
-//
-//
-////                byte[] buf = new byte[1024];
-////                int readLen = 0;
-////                String response="";
-////                readLen = is.read(buf);
-////                response = new String(buf, 0, readLen);
-//
-//                    //再接收一遍对手的结果
-//                    else {
-//                        byte[] buf2 = new byte[1024];
-//                        int readLen2 = 0;
-//                        String response2="";
-//                        readLen2 = is.read(buf2);
-//                        response2 = new String(buf2, 0, readLen2);
-//                        String[] res2 = response2.split(" ");
-//                        //到时候还加状态码，先这样
-//                        int oppox = Integer.parseInt(res2[1]);
-//                        int oppoy = Integer.parseInt(res2[2]);
-//                        chessBoard[oppox][oppoy] = -myRole;
-//                        drawChess();
-//                        if (res2[0].equals("Yes")){
-//                            //赢了弹窗 游戏结束
-//                            System.out.println("对手赢了");
-////                            //关掉旧界面
-////                            Stage curStage = (Stage) start.getScene().getWindow();
-////                            curStage.close();
-//                            // 开启新界面
-//                            FXMLLoader fxmlLoader = new FXMLLoader();
-//                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                            fxmlLoader.setControllerFactory(t -> new ResultController("很遗憾，对手赢了"));
-//                            Pane root = fxmlLoader.load();
-//                            Stage nextStage = new Stage();
-//                            nextStage.setTitle("对战结果");
-//                            nextStage.setScene(new Scene(root));
-//                            nextStage.setResizable(false);
-//                            nextStage.show();
-//                        }
-//                    }
-//
-//
-////                    Result oppo_res = (Result) ois.readObject();
-////                    chessBoard = oppo_res.chessboard;
-////                    drawChess();
-////                    TURN = !TURN;
-////                    if (oppo_res.state_code == 200 && oppo_res.win) {
-////                        //对手赢了
-////                    }
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
             }
         });
     }
-
-//    private boolean refreshBoard(int x, int y) {
-//        if (chessBoard[x][y] == EMPTY) {
-//            chessBoard[x][y] = TURN ? PLAY_1 : PLAY_2;
-//            drawChess();
-//            return true;
-//        }
-//        return false;
-//    }
 
     private void drawChess() {
         for (int i = 0; i < chessBoard.length; i++) {
