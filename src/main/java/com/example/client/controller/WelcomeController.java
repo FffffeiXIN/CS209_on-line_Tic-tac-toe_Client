@@ -69,7 +69,7 @@ public class WelcomeController {
                         String[] eachInfo = roomsInfo[i].split(" ");
                         if (eachInfo.length != 1) waiting.add(eachInfo[1]);
                     }
-                    System.out.println(waiting.toString());
+//                    System.out.println(waiting.toString());
 
                     // 开启新界面
                     FXMLLoader fxmlLoader = new FXMLLoader();

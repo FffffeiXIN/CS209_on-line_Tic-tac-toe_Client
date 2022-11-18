@@ -60,8 +60,11 @@ public class ChooseplayerController {
                     else send_str = choice + " ";
                     send_str += myName;
                     byte[] send_bytes = send_str.getBytes();
-                    os.write(send_bytes);
-                    os.flush();
+                    if(choice.equals("Create GameRoom")){
+                        os.write(send_bytes);
+                        os.flush();
+                    }
+
 
                     //关掉旧界面
                     Stage curStage = (Stage) config.getScene().getWindow();
@@ -70,9 +73,13 @@ public class ChooseplayerController {
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/game.fxml"));
                     if (choice.equals("Create GameRoom")) {
-                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player1"));
-                    } else
-                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player2"));
+                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player1",send_bytes));
+                        System.out.println("请等待玩家进入房间，待玩家加入后请先下棋：");
+                    } else{
+                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player2",send_bytes));
+                        System.out.println("进入游戏房间");
+                    }
+
                     Pane root = fxmlLoader.load();
                     Stage nextStage = new Stage();
                     nextStage.setTitle(myName);
