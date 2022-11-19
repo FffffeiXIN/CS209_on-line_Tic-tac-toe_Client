@@ -30,11 +30,12 @@
         <Line endX="170.0" layoutX="70.0" layoutY="150.0" rotate="270.0" startX="-100.0" />
         <Line endX="170.0" layoutX="160.0" layoutY="151.0" rotate="90.0" startX="-100.0" />
     </Pane>
-   <Button fx:id="start" layoutX="56.0" layoutY="118.0" mnemonicParsing="false" onAction="#startOnAction" prefHeight="46.0" prefWidth="86.0" text="准备" />
-   <Button fx:id="config" layoutX="56.0" layoutY="222.0" mnemonicParsing="false" onAction="#configOnAction" prefHeight="53.0" prefWidth="86.0" text="确定" />
+   <Button fx:id="start" layoutX="56.0" layoutY="90.0" mnemonicParsing="false" onAction="#startOnAction" prefHeight="46.0" prefWidth="86.0" text="准备" />
+   <Button fx:id="config" layoutX="56.0" layoutY="174.0" mnemonicParsing="false" onAction="#configOnAction" prefHeight="46.0" prefWidth="86.0" text="确定" />
    <Label fx:id="info" alignment="CENTER" layoutX="63.0" layoutY="21.0" prefHeight="31.0" prefWidth="489.0" text="请求">
       <font>
          <Font size="22.0" />
       </font>
    </Label>
+   <Button fx:id="exit" layoutX="56.0" layoutY="267.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="46.0" prefWidth="86.0" text="退出" />
 </AnchorPane>

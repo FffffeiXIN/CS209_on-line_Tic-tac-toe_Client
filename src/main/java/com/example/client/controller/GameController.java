@@ -34,6 +34,8 @@ public class GameController {
     private Button config;
 
     @FXML
+    private Button exit;
+    @FXML
     private Label info;
 
     @FXML
@@ -90,7 +92,8 @@ public class GameController {
                     // 开启新界面
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-                    fxmlLoader.setControllerFactory(t -> new ResultController("恭喜你赢了!"));
+                    Stage curStage = (Stage) config.getScene().getWindow();
+                    fxmlLoader.setControllerFactory(t -> new ResultController("恭喜你赢了!",curStage,player));
                     Pane root = fxmlLoader.load();
                     Stage nextStage = new Stage();
                     nextStage.setTitle("对战结果");
@@ -103,7 +106,8 @@ public class GameController {
                 else if (res.length == 4 && res[3].equals("full")) {
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-                    fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
+                    Stage curStage = (Stage) config.getScene().getWindow();
+                    fxmlLoader.setControllerFactory(t -> new ResultController("平局",curStage,player));
                     Pane root = fxmlLoader.load();
                     Stage nextStage = new Stage();
                     nextStage.setTitle("对战结果");
@@ -121,156 +125,90 @@ public class GameController {
                     String response2 = "";
                     readLen2 = is.read(buf2);
                     response2 = new String(buf2, 0, readLen2);
-                    String[] res2 = response2.split(" ");
-                    //到时候还加状态码，先这样
-                    int oppox = Integer.parseInt(res2[1]);
-                    int oppoy = Integer.parseInt(res2[2]);
-                    System.out.println(oppox+" "+oppoy);
-                    chessBoard[oppox][oppoy] = -myRole;
-                    drawChess();
-                    if (res2[0].equals("Yes")) {
-                        //赢了弹窗 游戏结束
+
+                    if (response2.equals("oppExit")){
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                        Stage curStage = (Stage) config.getScene().getWindow();
+                        fxmlLoader.setControllerFactory(t -> new ResultController("对手掉线",curStage,player));
+                        Pane root = fxmlLoader.load();
+                        Stage nextStage = new Stage();
+                        nextStage.setTitle("通知");
+                        nextStage.setScene(new Scene(root));
+                        nextStage.setResizable(false);
+                        nextStage.show();
+                        System.out.println("对手掉线");
+                    }
+                    else {
+                        String[] res2 = response2.split(" ");
+                        //到时候还加状态码，先这样
+                        int oppox = Integer.parseInt(res2[1]);
+                        int oppoy = Integer.parseInt(res2[2]);
+                        System.out.println(oppox+" "+oppoy);
+                        chessBoard[oppox][oppoy] = -myRole;
+                        drawChess();
+                        if (res2[0].equals("Yes")) {
+                            //赢了弹窗 游戏结束
 //                            //关掉旧界面
 //                            Stage curStage = (Stage) start.getScene().getWindow();
 //                            curStage.close();
-                        // 开启新界面
-                        FXMLLoader fxmlLoader = new FXMLLoader();
-                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-                        fxmlLoader.setControllerFactory(t -> new ResultController("很遗憾，对手赢了"));
-                        Pane root = fxmlLoader.load();
-                        Stage nextStage = new Stage();
-                        nextStage.setTitle("对战结果");
-                        nextStage.setScene(new Scene(root));
-                        nextStage.setResizable(false);
-                        nextStage.show();
-                        System.out.println("游戏结束，对手赢了");
+                            // 开启新界面
+                            FXMLLoader fxmlLoader = new FXMLLoader();
+                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                            Stage curStage = (Stage) config.getScene().getWindow();
+                            fxmlLoader.setControllerFactory(t -> new ResultController("很遗憾，对手赢了",curStage,player));
+                            Pane root = fxmlLoader.load();
+                            Stage nextStage = new Stage();
+                            nextStage.setTitle("对战结果");
+                            nextStage.setScene(new Scene(root));
+                            nextStage.setResizable(false);
+                            nextStage.show();
+                            System.out.println("游戏结束，对手赢了");
+                        }
+                        //如果加上的状态码要改长度 或者让状态码和这个合并也行
+                        else if (res2.length == 4 && res2[3].equals("full")) {
+                            FXMLLoader fxmlLoader = new FXMLLoader();
+                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                            Stage curStage = (Stage) config.getScene().getWindow();
+                            fxmlLoader.setControllerFactory(t -> new ResultController("平局",curStage,player));
+                            Pane root = fxmlLoader.load();
+                            Stage nextStage = new Stage();
+                            nextStage.setTitle("对战结果");
+                            nextStage.setScene(new Scene(root));
+                            nextStage.setResizable(false);
+                            nextStage.show();
+                            System.out.println("游戏结束，平局");
+                        }
+                        else {
+                            System.out.println("请下棋：");
+                        }
                     }
-                    //如果加上的状态码要改长度 或者让状态码和这个合并也行
-                    else if (res2.length == 4 && res2[3].equals("full")) {
-                        FXMLLoader fxmlLoader = new FXMLLoader();
-                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-                        fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
-                        Pane root = fxmlLoader.load();
-                        Stage nextStage = new Stage();
-                        nextStage.setTitle("对战结果");
-                        nextStage.setScene(new Scene(root));
-                        nextStage.setResizable(false);
-                        nextStage.show();
-                        System.out.println("游戏结束，平局");
-                    }
-                    else {
-                        System.out.println("请下棋：");
-                    }
-
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                Stage curStage = (Stage) config.getScene().getWindow();
+                fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                Pane root = null;
+                try {
+                    root = fxmlLoader.load();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                Stage nextStage = new Stage();
+                nextStage.setTitle("通知");
+                nextStage.setScene(new Scene(root));
+                nextStage.setResizable(false);
+                nextStage.show();
+                System.out.println("服务器异常");
+//                throw new RuntimeException(e);
             }
         });
-//        config.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//
-//            @Override
-//            public void handle(MouseEvent mouseEvent) {
-//                try {
-//                    //发送行动位置报文
-//                    OutputStream os = player.getOutputStream();
-//                    String send_str;
-//                    send_str = x + " " + y;
-//                    System.out.println(send_str);
-//                    byte[] send_bytes = send_str.getBytes();
-//
-//                    os.write(send_bytes);
-//                    os.flush();
-//
-//                    //接收结果报文
-//                    InputStream is = player.getInputStream();
-//                    byte[] buf = new byte[1024];
-//                    int readLen = 0;
-//                    String response = "";
-//                    readLen = is.read(buf);
-//                    response = new String(buf, 0, readLen);
-//                    String[] res = response.split(" ");
-//                    //到时候还加状态码，先这样
-//                    if (res[0].equals("Yes")) {
-//                        System.out.println("我赢了");
-//                        // 开启新界面
-//                        FXMLLoader fxmlLoader = new FXMLLoader();
-//                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                        fxmlLoader.setControllerFactory(t -> new ResultController("恭喜你赢了!"));
-//                        Pane root = fxmlLoader.load();
-//                        Stage nextStage = new Stage();
-//                        nextStage.setTitle("对战结果");
-//                        nextStage.setScene(new Scene(root));
-//                        nextStage.setResizable(false);
-//                        nextStage.show();
-//                    }
-//                    //如果加上的状态码要改长度 或者让状态码和这个合并也行
-//                    else if (res.length == 4 && res[3].equals("full")) {
-//                        FXMLLoader fxmlLoader = new FXMLLoader();
-//                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                        fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
-//                        Pane root = fxmlLoader.load();
-//                        Stage nextStage = new Stage();
-//                        nextStage.setTitle("对战结果");
-//                        nextStage.setScene(new Scene(root));
-//                        nextStage.setResizable(false);
-//                        nextStage.show();
-//                    }
-//
-//                    //再接收一遍对手的结果
-//                    else {
-//                        byte[] buf2 = new byte[1024];
-//                        int readLen2 = 0;
-//                        String response2 = "";
-//                        readLen2 = is.read(buf2);
-//                        response2 = new String(buf2, 0, readLen2);
-//                        String[] res2 = response2.split(" ");
-//                        //到时候还加状态码，先这样
-//                        int oppox = Integer.parseInt(res2[1]);
-//                        int oppoy = Integer.parseInt(res2[2]);
-//                        chessBoard[oppox][oppoy] = -myRole;
-//                        drawChess();
-//                        if (res2[0].equals("Yes")) {
-//                            //赢了弹窗 游戏结束
-//                            System.out.println("对手赢了");
-////                            //关掉旧界面
-////                            Stage curStage = (Stage) start.getScene().getWindow();
-////                            curStage.close();
-//                            // 开启新界面
-//                            FXMLLoader fxmlLoader = new FXMLLoader();
-//                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                            fxmlLoader.setControllerFactory(t -> new ResultController("很遗憾，对手赢了"));
-//                            Pane root = fxmlLoader.load();
-//                            Stage nextStage = new Stage();
-//                            nextStage.setTitle("对战结果");
-//                            nextStage.setScene(new Scene(root));
-//                            nextStage.setResizable(false);
-//                            nextStage.show();
-//                        }
-//                        //如果加上的状态码要改长度 或者让状态码和这个合并也行
-//                        else if (res.length == 4 && res[3].equals("full")) {
-//                            FXMLLoader fxmlLoader = new FXMLLoader();
-//                            fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
-//                            fxmlLoader.setControllerFactory(t -> new ResultController("平局"));
-//                            Pane root = fxmlLoader.load();
-//                            Stage nextStage = new Stage();
-//                            nextStage.setTitle("对战结果");
-//                            nextStage.setScene(new Scene(root));
-//                            nextStage.setResizable(false);
-//                            nextStage.show();
-//                        }
-//                    }
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
     }
 
     @FXML
     void startOnAction(ActionEvent event) {
         start.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
@@ -286,20 +224,91 @@ public class GameController {
                     String response = "";
                     readLen = is.read(buf);
                     response = new String(buf, 0, readLen);
-                    if (!response.equals("ok to start")) {
-                        String[] pos = response.split(" ");
-                        int x = Integer.parseInt(pos[1]);
-                        int y = Integer.parseInt(pos[2]);
-                        System.out.println(x+" "+y);
-                        chessBoard[x][y] = -myRole;
-                        drawChess();
-                        System.out.println("请下棋：");
-                    } else {
-                        info.setVisible(false);
+                    if (response.equals("oppExit")){
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                        Stage curStage = (Stage) config.getScene().getWindow();
+                        fxmlLoader.setControllerFactory(t -> new ResultController("对手掉线",curStage,player));
+                        Pane root = fxmlLoader.load();
+                        Stage nextStage = new Stage();
+                        nextStage.setTitle("通知");
+                        nextStage.setScene(new Scene(root));
+                        nextStage.setResizable(false);
+                        nextStage.show();
+                        System.out.println("对手掉线");
+                    }
+                    else {
+                        if (!response.equals("ok to start")) {
+                            String[] pos = response.split(" ");
+                            int x = Integer.parseInt(pos[1]);
+                            int y = Integer.parseInt(pos[2]);
+                            System.out.println(x+" "+y);
+                            chessBoard[x][y] = -myRole;
+                            drawChess();
+                            System.out.println("请下棋：");
+                        } else {
+                            info.setVisible(false);
+                        }
+                        start.setDisable(true);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                    Stage curStage = (Stage) config.getScene().getWindow();
+                    fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                    Pane root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage nextStage = new Stage();
+                    nextStage.setTitle("通知");
+                    nextStage.setScene(new Scene(root));
+                    nextStage.setResizable(false);
+                    nextStage.show();
+                    System.out.println("服务器异常");
+//                    throw new RuntimeException(e);
                 }
+            }
+        });
+    }
+
+    @FXML
+    void exitOnAction(ActionEvent event) {
+        exit.setOnMouseClicked(event1->{
+            try {
+                //发消息说我走了
+                OutputStream os = player.getOutputStream();
+                String exit_str;
+                exit_str = "exit";
+                System.out.println(exit_str);
+                byte[] send_bytes = exit_str.getBytes();
+                os.write(send_bytes);
+                os.flush();
+                //关闭socket
+                player.close();
+                //关闭页面
+                Stage curStage = (Stage) exit.getScene().getWindow();
+                curStage.close();
+            } catch (IOException e) {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                Stage curStage = (Stage) config.getScene().getWindow();
+                fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                Pane root = null;
+                try {
+                    root = fxmlLoader.load();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                Stage nextStage = new Stage();
+                nextStage.setTitle("通知");
+                nextStage.setScene(new Scene(root));
+                nextStage.setResizable(false);
+                nextStage.show();
+                System.out.println("服务器异常");
+//                throw new RuntimeException(e);
             }
         });
     }
