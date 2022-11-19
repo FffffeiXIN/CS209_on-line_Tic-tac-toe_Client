@@ -40,14 +40,22 @@ public class GameController {
 
     @FXML
     private Rectangle game_panel;
+    String win;
+    String lose;
+    String draw;
 
     private static int[][] chessBoard = new int[3][3];
     private static boolean[][] flag = new boolean[3][3];
     private int myRole;
     private String info_mess;
     private byte[] send;
+    private String myName;
 
-    public GameController(Socket socket, String myRole, byte[] send_byte) {
+    public GameController(Socket socket, String myRole, byte[] send_byte, String name, String win, String lose, String draw) {
+        myName = name;
+        this.win = win;
+        this.lose = lose;
+        this.draw = draw;
         send = send_byte;
         player = socket;
         if (myRole.equals("player1")) {
@@ -66,7 +74,7 @@ public class GameController {
 
     @FXML
     void configOnAction(ActionEvent event) {
-        config.setOnMouseClicked(event1 ->{
+        config.setOnMouseClicked(event1 -> {
             try {
                 //发送行动位置报文
                 OutputStream os = player.getOutputStream();
@@ -89,11 +97,12 @@ public class GameController {
                 //到时候还加状态码，先这样
                 if (res[0].equals("Yes")) {
                     System.out.println("游戏结束，恭喜你赢了");
+                    win = String.valueOf(Integer.parseInt(win)+ 1);
                     // 开启新界面
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                     Stage curStage = (Stage) config.getScene().getWindow();
-                    fxmlLoader.setControllerFactory(t -> new ResultController("恭喜你赢了!",curStage,player));
+                    fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 恭喜你赢了!", curStage, player, myName, win, lose, draw));
                     Pane root = fxmlLoader.load();
                     Stage nextStage = new Stage();
                     nextStage.setTitle("对战结果");
@@ -104,10 +113,11 @@ public class GameController {
                 }
                 //如果加上的状态码要改长度 或者让状态码和这个合并也行
                 else if (res.length == 4 && res[3].equals("full")) {
+                    draw = String.valueOf(Integer.parseInt(draw)+ 1);
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                     Stage curStage = (Stage) config.getScene().getWindow();
-                    fxmlLoader.setControllerFactory(t -> new ResultController("平局",curStage,player));
+                    fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 平局", curStage, player, myName, win, lose, draw));
                     Pane root = fxmlLoader.load();
                     Stage nextStage = new Stage();
                     nextStage.setTitle("对战结果");
@@ -126,11 +136,11 @@ public class GameController {
                     readLen2 = is.read(buf2);
                     response2 = new String(buf2, 0, readLen2);
 
-                    if (response2.equals("oppExit")){
+                    if (response2.equals("oppExit")) {
                         FXMLLoader fxmlLoader = new FXMLLoader();
                         fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                         Stage curStage = (Stage) config.getScene().getWindow();
-                        fxmlLoader.setControllerFactory(t -> new ResultController("对手掉线",curStage,player));
+                        fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 对手掉线", curStage, player, myName, win, lose, draw));
                         Pane root = fxmlLoader.load();
                         Stage nextStage = new Stage();
                         nextStage.setTitle("通知");
@@ -138,16 +148,16 @@ public class GameController {
                         nextStage.setResizable(false);
                         nextStage.show();
                         System.out.println("对手掉线");
-                    }
-                    else {
+                    } else {
                         String[] res2 = response2.split(" ");
                         //到时候还加状态码，先这样
                         int oppox = Integer.parseInt(res2[1]);
                         int oppoy = Integer.parseInt(res2[2]);
-                        System.out.println(oppox+" "+oppoy);
+                        System.out.println(oppox + " " + oppoy);
                         chessBoard[oppox][oppoy] = -myRole;
                         drawChess();
                         if (res2[0].equals("Yes")) {
+                            lose = String.valueOf(Integer.parseInt(lose)+ 1);
                             //赢了弹窗 游戏结束
 //                            //关掉旧界面
 //                            Stage curStage = (Stage) start.getScene().getWindow();
@@ -156,7 +166,7 @@ public class GameController {
                             FXMLLoader fxmlLoader = new FXMLLoader();
                             fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                             Stage curStage = (Stage) config.getScene().getWindow();
-                            fxmlLoader.setControllerFactory(t -> new ResultController("很遗憾，对手赢了",curStage,player));
+                            fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 很遗憾，对手赢了", curStage, player, myName, win, lose, draw));
                             Pane root = fxmlLoader.load();
                             Stage nextStage = new Stage();
                             nextStage.setTitle("对战结果");
@@ -167,10 +177,11 @@ public class GameController {
                         }
                         //如果加上的状态码要改长度 或者让状态码和这个合并也行
                         else if (res2.length == 4 && res2[3].equals("full")) {
+                            draw = String.valueOf(Integer.parseInt(draw)+ 1);
                             FXMLLoader fxmlLoader = new FXMLLoader();
                             fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                             Stage curStage = (Stage) config.getScene().getWindow();
-                            fxmlLoader.setControllerFactory(t -> new ResultController("平局",curStage,player));
+                            fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 平局", curStage, player, myName, win, lose, draw));
                             Pane root = fxmlLoader.load();
                             Stage nextStage = new Stage();
                             nextStage.setTitle("对战结果");
@@ -178,8 +189,7 @@ public class GameController {
                             nextStage.setResizable(false);
                             nextStage.show();
                             System.out.println("游戏结束，平局");
-                        }
-                        else {
+                        } else {
                             System.out.println("请下棋：");
                         }
                     }
@@ -188,7 +198,7 @@ public class GameController {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                 Stage curStage = (Stage) config.getScene().getWindow();
-                fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 服务器异常", curStage, player, myName, win, lose, draw));
                 Pane root = null;
                 try {
                     root = fxmlLoader.load();
@@ -224,11 +234,11 @@ public class GameController {
                     String response = "";
                     readLen = is.read(buf);
                     response = new String(buf, 0, readLen);
-                    if (response.equals("oppExit")){
+                    if (response.equals("oppExit")) {
                         FXMLLoader fxmlLoader = new FXMLLoader();
                         fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                         Stage curStage = (Stage) config.getScene().getWindow();
-                        fxmlLoader.setControllerFactory(t -> new ResultController("对手掉线",curStage,player));
+                        fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 对手掉线", curStage, player, myName, win, lose, draw));
                         Pane root = fxmlLoader.load();
                         Stage nextStage = new Stage();
                         nextStage.setTitle("通知");
@@ -236,13 +246,12 @@ public class GameController {
                         nextStage.setResizable(false);
                         nextStage.show();
                         System.out.println("对手掉线");
-                    }
-                    else {
+                    } else {
                         if (!response.equals("ok to start")) {
                             String[] pos = response.split(" ");
                             int x = Integer.parseInt(pos[1]);
                             int y = Integer.parseInt(pos[2]);
-                            System.out.println(x+" "+y);
+                            System.out.println(x + " " + y);
                             chessBoard[x][y] = -myRole;
                             drawChess();
                             System.out.println("请下棋：");
@@ -255,7 +264,7 @@ public class GameController {
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                     Stage curStage = (Stage) config.getScene().getWindow();
-                    fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                    fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 服务器异常", curStage, player, myName, win, lose, draw));
                     Pane root = null;
                     try {
                         root = fxmlLoader.load();
@@ -276,7 +285,7 @@ public class GameController {
 
     @FXML
     void exitOnAction(ActionEvent event) {
-        exit.setOnMouseClicked(event1->{
+        exit.setOnMouseClicked(event1 -> {
             try {
                 //发消息说我走了
                 OutputStream os = player.getOutputStream();
@@ -295,7 +304,7 @@ public class GameController {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
                 Stage curStage = (Stage) config.getScene().getWindow();
-                fxmlLoader.setControllerFactory(t -> new ResultController("服务器异常",curStage,player));
+                fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 服务器异常", curStage, player, myName, win, lose, draw));
                 Pane root = null;
                 try {
                     root = fxmlLoader.load();

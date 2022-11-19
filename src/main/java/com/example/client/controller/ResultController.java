@@ -7,9 +7,21 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class ResultController {
+
+    @FXML
+    private Label showdraw;
+
+    @FXML
+    private Label showlose;
+
+    @FXML
+    private Label showwin;
+
+    private String myname;
 
     @FXML
     private Button close;
@@ -17,14 +29,26 @@ public class ResultController {
     @FXML
     private Label res;
 
+
     String result;
 
     Stage pre_stage;
 
     Socket socket;
+    String win;
+    String lose;
+    String draw;
 
     @FXML
     void closeOnAction(ActionEvent event) throws IOException {
+        //发送报文更改数据库
+        OutputStream os = socket.getOutputStream();
+        String close_str;
+        close_str =myname+" "+ win+ " "+lose+" "+draw;
+        System.out.println(close_str);
+        byte[] send_bytes = close_str.getBytes();
+        os.write(send_bytes);
+        os.flush();
         //关闭页面,关闭连接
         Stage curStage = (Stage) close.getScene().getWindow();
         curStage.close();
@@ -32,15 +56,22 @@ public class ResultController {
         socket.close();
     }
 
-    public ResultController (String result , Stage stage, Socket socket){
+    public ResultController (String result , Stage stage, Socket socket, String name, String win, String lose, String draw){
         this.result = result;
         pre_stage = stage;
         this.socket = socket;
+        this.win = win;
+        this.lose = lose;
+        this.draw = draw;
+        myname = name;
     }
 
     @FXML
     public void initialize() {
         res.setText(result);
+        showwin.setText("Win: "+win);
+        showlose.setText("Lose: "+ lose);
+        showdraw.setText("Draw: "+draw);
     }
 }
 

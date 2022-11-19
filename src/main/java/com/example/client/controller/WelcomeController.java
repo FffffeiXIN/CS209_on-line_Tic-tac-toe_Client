@@ -28,6 +28,13 @@ public class WelcomeController {
     @FXML
     private TextField Name;
 
+    private String win;
+    private String lose;
+    private String draw;
+
+//    @FXML
+//    private TextField password;
+
     @FXML
     void startButtonOnAction(ActionEvent event) {
         startButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -40,8 +47,12 @@ public class WelcomeController {
                     curStage.close();
 
                     //填充新界面内容
+                    String name = Name.getText();
+//                    String passwd = password.getText();
+
                     // 要发送的消息
-                    String sendMsg = "开始游戏";
+//                    String sendMsg = name+ " "+ passwd;
+                    String sendMsg = name;
 
                     // 获取服务器的地址
                     InetAddress addr = InetAddress.getByName("localhost");
@@ -65,7 +76,11 @@ public class WelcomeController {
                     //处理信息 报文格式：房间信息1\r\n房间信息2…… 房间信息：full /available /available p1
                     String[] roomsInfo = receiveMsg.split("\r\n");
                     List<String> waiting = new ArrayList<>();
-                    for (int i = 0; i < roomsInfo.length; i++) {
+                    win = roomsInfo[0].split(" ")[0];
+                    lose = roomsInfo[0].split(" ")[1];
+                    draw = roomsInfo[0].split(" ")[2];
+
+                    for (int i = 1; i < roomsInfo.length; i++) {
                         String[] eachInfo = roomsInfo[i].split(" ");
                         if (eachInfo.length != 1) waiting.add(eachInfo[1]);
                     }
@@ -76,7 +91,7 @@ public class WelcomeController {
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/chooseplayer.fxml"));
                     fxmlLoader.setControllerFactory(t -> {
                         try {
-                            return new ChooseplayerController(waiting, Name.getText());
+                            return new ChooseplayerController(waiting, Name.getText(),win,lose,draw);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
