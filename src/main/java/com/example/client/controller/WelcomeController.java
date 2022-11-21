@@ -52,7 +52,7 @@ public class WelcomeController {
 
                     // 要发送的消息
 //                    String sendMsg = name+ " "+ passwd;
-                    String sendMsg = name;
+                    String sendMsg = name + " 0";
 
                     // 获取服务器的地址
                     InetAddress addr = InetAddress.getByName("localhost");

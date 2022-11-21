@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.client.controller.ChooseplayerController">
    <children>
-      <ChoiceBox fx:id="players" layoutX="188.0" layoutY="164.0" prefHeight="54.0" prefWidth="208.0" AnchorPane.topAnchor="164.0" />
+      <ChoiceBox fx:id="players" layoutX="127.0" layoutY="163.0" prefHeight="54.0" prefWidth="208.0" AnchorPane.topAnchor="163.0" />
       <Button fx:id="config" layoutX="220.0" layoutY="276.0" mnemonicParsing="false" onAction="#configOnAction" prefHeight="63.0" prefWidth="144.0" text="确定">
          <font>
             <Font size="24.0" />
@@ -29,5 +29,10 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <Button fx:id="refresh" layoutX="386.0" layoutY="168.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="44.0" prefWidth="104.0" text="刷新">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

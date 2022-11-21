@@ -37,5 +37,5 @@
          <Font size="22.0" />
       </font>
    </Label>
-   <Button fx:id="exit" layoutX="56.0" layoutY="267.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="46.0" prefWidth="86.0" text="退出" />
+   <Button fx:id="exit" layoutX="56.0" layoutY="267.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="46.0" prefWidth="86.0" text="不等了" />
 </AnchorPane>
