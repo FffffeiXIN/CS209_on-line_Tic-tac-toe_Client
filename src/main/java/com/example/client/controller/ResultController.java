@@ -1,4 +1,8 @@
 package com.example.client.controller;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -6,9 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 
 public class ResultController {
 
@@ -42,17 +43,16 @@ public class ResultController {
 
     @FXML
     void closeOnAction(ActionEvent event) throws IOException {
-        if (error){
+        if (error) {
             Stage curStage = (Stage) close.getScene().getWindow();
             curStage.close();
             pre_stage.close();
             socket.close();
-        }
-        else {
+        } else {
             //发送报文更改数据库
             OutputStream os = socket.getOutputStream();
             String close_str;
-            close_str =myname+" "+ win+ " "+lose+" "+draw;
+            close_str = myname + " " + win + " " + lose + " " + draw;
             System.out.println(close_str);
             byte[] send_bytes = close_str.getBytes();
             os.write(send_bytes);
@@ -66,7 +66,7 @@ public class ResultController {
 
     }
 
-    public ResultController (String result , Stage stage, Socket socket, String name, String win, String lose, String draw,boolean error){
+    public ResultController(String result, Stage stage, Socket socket, String name, String win, String lose, String draw, boolean error) {
         this.result = result;
         pre_stage = stage;
         this.socket = socket;
@@ -80,9 +80,9 @@ public class ResultController {
     @FXML
     public void initialize() {
         res.setText(result);
-        showwin.setText("Win: "+win);
-        showlose.setText("Lose: "+ lose);
-        showdraw.setText("Draw: "+draw);
+        showwin.setText("Win: " + win);
+        showlose.setText("Lose: " + lose);
+        showdraw.setText("Draw: " + draw);
     }
 }
 

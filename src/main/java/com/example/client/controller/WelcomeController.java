@@ -1,5 +1,11 @@
 package com.example.client.controller;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,15 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class WelcomeController {
 
@@ -31,9 +28,6 @@ public class WelcomeController {
     private String win;
     private String lose;
     private String draw;
-
-//    @FXML
-//    private TextField password;
 
     @FXML
     void startButtonOnAction(ActionEvent event) {
@@ -48,10 +42,8 @@ public class WelcomeController {
 
                     //填充新界面内容
                     String name = Name.getText();
-//                    String passwd = password.getText();
 
                     // 要发送的消息
-//                    String sendMsg = name+ " "+ passwd;
                     String sendMsg = name + " 0";
 
                     // 获取服务器的地址
@@ -91,7 +83,7 @@ public class WelcomeController {
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/chooseplayer.fxml"));
                     fxmlLoader.setControllerFactory(t -> {
                         try {
-                            return new ChooseplayerController(waiting, Name.getText(),win,lose,draw);
+                            return new ChooseplayerController(waiting, Name.getText(), win, lose, draw);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

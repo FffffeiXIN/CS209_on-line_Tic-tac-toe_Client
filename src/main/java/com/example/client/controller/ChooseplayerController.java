@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -41,10 +40,10 @@ public class ChooseplayerController {
 
     @FXML
     private Label showwin;
+
     public ChooseplayerController(List<String> waiting, String name, String win, String lose, String draw) throws IOException {
         this.waiting = waiting;
         myName = name;
-//        socket = new Socket("localhost", 8081);
         this.win = win;
         this.lose = lose;
         this.draw = draw;
@@ -52,9 +51,9 @@ public class ChooseplayerController {
 
     @FXML
     public void initialize() {
-        showwin.setText("Win: "+win);
-        showlose.setText("Lose: "+ lose);
-        showdraw.setText("Draw: "+draw);
+        showwin.setText("Win: " + win);
+        showlose.setText("Lose: " + lose);
+        showdraw.setText("Draw: " + draw);
         players.setValue("choose players");
         for (int i = 0; i < waiting.size(); i++) {
             if (!waiting.get(i).equals(myName)) {
@@ -84,7 +83,7 @@ public class ChooseplayerController {
                     else send_str = choice + " ";
                     send_str += myName;
                     byte[] send_bytes = send_str.getBytes();
-                    if(choice.equals("Create GameRoom")){
+                    if (choice.equals("Create GameRoom")) {
                         os.write(send_bytes);
                         os.flush();
                     }
@@ -97,10 +96,10 @@ public class ChooseplayerController {
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/game.fxml"));
                     if (choice.equals("Create GameRoom")) {
-                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player1",send_bytes,myName, win,lose,draw));
+                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player1", send_bytes, myName, win, lose, draw));
                         System.out.println("请等待玩家进入房间，待玩家加入后请先下棋：");
-                    } else{
-                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player2",send_bytes,myName,win,lose,draw));
+                    } else {
+                        fxmlLoader.setControllerFactory(t -> new GameController(socket, "player2", send_bytes, myName, win, lose, draw));
                         System.out.println("进入游戏房间");
                     }
 
@@ -121,7 +120,7 @@ public class ChooseplayerController {
                             //关闭socket
                             socket.close();
                         } catch (IOException e) {
-
+                            e.printStackTrace();
                         }
                     });
                     nextStage.show();
@@ -131,6 +130,7 @@ public class ChooseplayerController {
             }
         });
     }
+
     @FXML
     void refreshOnAction(ActionEvent event) throws IOException {
         // 要发送的消息
@@ -176,7 +176,7 @@ public class ChooseplayerController {
         fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/chooseplayer.fxml"));
         fxmlLoader.setControllerFactory(t -> {
             try {
-                return new ChooseplayerController(waiting, myName,win,lose,draw);
+                return new ChooseplayerController(waiting, myName, win, lose, draw);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
