@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -29,6 +30,8 @@ public class WelcomeController {
     private String lose;
     private String draw;
 
+    private DatagramSocket socket;
+
     @FXML
     void startButtonOnAction(ActionEvent event) {
         startButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -36,9 +39,7 @@ public class WelcomeController {
             public void handle(MouseEvent mouseEvent) {
                 //发送socket 处理数据
                 try {
-                    //关掉旧界面
-                    Stage curStage = (Stage) startButton.getScene().getWindow();
-                    curStage.close();
+
 
                     //填充新界面内容
                     String name = Name.getText();
@@ -54,7 +55,7 @@ public class WelcomeController {
                             sendMsg.getBytes().length, addr, 8080);
 
                     // 创建Socket对象
-                    DatagramSocket socket = new DatagramSocket();
+                    socket = new DatagramSocket();
 
                     // 发送消息到服务器
                     socket.send(packet);
@@ -78,6 +79,9 @@ public class WelcomeController {
                     }
 //                    System.out.println(waiting.toString());
 
+                    //关掉旧界面
+                    Stage curStage = (Stage) startButton.getScene().getWindow();
+                    curStage.close();
                     // 开启新界面
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/chooseplayer.fxml"));
@@ -99,7 +103,23 @@ public class WelcomeController {
 
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+//                    e.printStackTrace();
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                    Stage curStage = (Stage) startButton.getScene().getWindow();
+                    fxmlLoader.setControllerFactory(t -> new ResultController(Name.getText() + ": 服务器异常", curStage, new Socket(), Name.getText(), win, lose, draw, true));
+                    Pane root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage nextStage = new Stage();
+                    nextStage.setTitle("通知");
+                    nextStage.setScene(new Scene(root));
+                    nextStage.setResizable(false);
+                    nextStage.show();
+                    System.out.println("服务器异常");
                 }
             }
         });

@@ -125,7 +125,23 @@ public class ChooseplayerController {
                     });
                     nextStage.show();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+//                    throw new RuntimeException(e);
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    fxmlLoader.setLocation(getClass().getClassLoader().getResource("com/example/client/result.fxml"));
+                    Stage curStage = (Stage) config.getScene().getWindow();
+                    fxmlLoader.setControllerFactory(t -> new ResultController(myName + ": 服务器异常", curStage, socket, myName, win, lose, draw, true));
+                    Pane root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage nextStage = new Stage();
+                    nextStage.setTitle("通知");
+                    nextStage.setScene(new Scene(root));
+                    nextStage.setResizable(false);
+                    nextStage.show();
+                    System.out.println("服务器异常");
                 }
             }
         });

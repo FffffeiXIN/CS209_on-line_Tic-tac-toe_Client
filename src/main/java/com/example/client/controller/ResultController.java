@@ -47,7 +47,7 @@ public class ResultController {
             Stage curStage = (Stage) close.getScene().getWindow();
             curStage.close();
             pre_stage.close();
-            socket.close();
+//            socket.close();
         } else {
             //发送报文更改数据库
             OutputStream os = socket.getOutputStream();
